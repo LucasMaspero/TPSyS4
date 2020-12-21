@@ -1,5 +1,5 @@
-# Trabajo Practico N°4 - Lenguaje Mini (Gramatica Lexica con Flex)
-Tercer Trabajo Practico Sintaxis y Semantica de los Lenguajes - Año 2020 - Curso K2053
+# Trabajo Practico N°4 - Lenguaje Mini (Analizador Sintáctico / Parser con Bison & Flex)
+Cuarto Trabajo Practico Sintaxis y Semantica de los Lenguajes - Año 2020 - Curso K2053
 
 ## Integrantes
 * Lucas Maspero               (Legajo 161542-7)
