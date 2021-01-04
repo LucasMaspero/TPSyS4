@@ -1,6 +1,6 @@
 /*
-    Trabajo Practico N°3 - Lenguaje Mini (Gramatica Lexica y Flex)
-        Tercer Trabajo Practico Sintaxis y Semantica de los Lenguajes - Año 2020 - Curso K2053
+    Trabajo Practico N°4 - Lenguaje Mini (Analizador Sintáctico / Parser con Bison)
+        Cuarto Trabajo Practico Sintaxis y Semantica de los Lenguajes - Año 2020 - Curso K2053
 
     Integrantes
         Lucas Maspero (Legajo 161542-7)
@@ -8,41 +8,24 @@
         Natalia Gutiérrez (Legajo 156549-7)
 */
 
+#include <stdio.h>
+#include "parser.h"
 #include "scanner.h"
-
-int token;
+extern int yynerrs;
 
 int main() 
 {
-	do 
+	switch (yyparse())
 	{
-		token = yylex();
-		
-		switch (token)
-		{
-			case PALABRA_RESERVADA:
-				printf("Token: Palabra Reservada\tLexema: %s\n", yytext);
-				break;
-			case IDENTIFICADOR:
-				printf("Token: Identificador\tLexema: %s\n", yytext);
-				break;
-			case CONSTANTE:
-				printf("Token: Constante\tLexema: %s\n", yytext);
-				break;
-			case OPERADOR_ASIGNACION:
-				printf("Token: Operador Asignación\tLexema: %s\n", yytext);
-				break;
-			case OPERADOR:
-				printf("Token Operador\tlexema: '%c'\n", yytext[0]);
-				break;
-			case CARACTER_PUNTUACION:
-				printf("Token Caracter de Puntuacion\tlexema: '%c'\n", yytext[0]);
-				break;
-			case FDT:
-				printf("Token: Fin de Archivo");
-				break;
-		}
-	} while (token != FDT);
+		case 0:
+			printf("Compilacion terminada con exito\n"); 
+			printf("Errores sintacticos: %d - Errores lexicos: %d\n", yynerrs, errlex); 
+			return 0;
+		case 1:
+			printf("Errores de compilacion\n");
+			printf("Errores sintacticos: %d - Errores lexicos: %d\n", yynerrs, errlex);
+			return 1;
+	}
 	
 	return 0;
 }

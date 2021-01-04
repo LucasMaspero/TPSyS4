@@ -1,34 +1,46 @@
 %top{
 	#include <stdio.h>
-	#include "tokens.h"
+	#include "parser.h"
+	int errlex;
+	char auxBuffer[300];
+	void yyerror(const char *);
 }	
 
 %option header-file="scanner.h"
 %option outfile="scanner.c"
 %option noinput
 %option nounput
+%option noyywrap
+%option yylineno
 
 Letra								[[:alpha:]]
 Digito								[0-9]
 Alfanumerico							[[:alnum:]]
 Espacio							[[:space:]]
-PalabraReservada						"programa"|"declarar"|"leer"|"escribir"|"fin-prog"
 OperadorAsignacion						<-
-Operador							[+\-*/]
-CaracterPuntuacion						[;,()]
 Comentario							"##".*
 Otros								[[:^alnum:]]{-}[[:space:]\+\-*/;,()]
 
 %%
-{PalabraReservada}						return PALABRA_RESERVADA;
-{Letra}{Alfanumerico}*						return IDENTIFICADOR;
-{Digito}+							return CONSTANTE;
+programa							return PROGRAMA;
+fin-prog							return FINPROG;
+leer								return LEER;
+escribir 							return ESCRIBIR;
+declarar							return DECLARAR;
+{Letra}{Alfanumerico}*						{yylval = strdup(yytext);return IDENTIFICADOR;}
+{Digito}+							{yylval = strdup(yytext);return CONSTANTE;}
+"("								return '(';
+")"								return ')';
+","								return ',';
+";"								return ';';
+"+"								return '+';
+"-"								return '-';
+"*"								return '*';
+"/"								return '/';
 {OperadorAsignacion}						return OPERADOR_ASIGNACION;
-{Operador}							return OPERADOR;
-{CaracterPuntuacion}						return CARACTER_PUNTUACION;
-{Otros}+							printf("Error léxico: cadena desconocida: %s\n", yytext);
-{Letra}{Alfanumerico}*{Otros}+({Alfanumerico}|{Otros})*	printf("Error léxico: identificador inválido: %s\n", yytext);
-{Digito}+{Letra}+{Alfanumerico}*				printf("Error léxico: constante inválida: %s\n", yytext);
-{Espacio}*							/* ignorar */
+{Otros}+							{sprintf(auxBuffer, "Error lexico: cadena desconocida: %s", yytext); yyerror(auxBuffer); errlex++;}
+{Letra}{Alfanumerico}*{Otros}+({Alfanumerico}|{Otros})*	{sprintf(auxBuffer, "Error lexico: identificador invalido: %s", yytext); yyerror(auxBuffer); errlex++;}
+{Digito}+{Letra}+{Alfanumerico}*				{sprintf(auxBuffer ,"Error lexico: constante invalida: %s", yytext); yyerror(auxBuffer); errlex++;}
+{Espacio}+							/* ignorar */
 {Comentario}							/* ignorar */
 %%
